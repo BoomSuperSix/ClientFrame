@@ -11,52 +11,54 @@ public class ScriptsFromFile : MonoBehaviour
     private string strLog = "";    
 
 	void Start () 
-    {
-#if UNITY_5 || UNITY_2017		
-        Application.logMessageReceived += Log;
-#else
-        Application.RegisterLogCallback(Log);
-#endif         
-        lua = new LuaState();                
-        lua.Start();        
-        //如果移动了ToLua目录，自己手动修复吧，只是例子就不做配置了
-        string fullPath = Application.dataPath + "\\ToLua/Examples/02_ScriptsFromFile";
-        lua.AddSearchPath(fullPath);        
-    }
+	{
+		#if UNITY_5 || UNITY_2017		
+			Application.logMessageReceived += Log;
+		#else
+			Application.RegisterLogCallback(Log);
+		#endif         
+		lua = new LuaState();                
+		lua.Start();        
 
-    void Log(string msg, string stackTrace, LogType type)
-    {
-        strLog += msg;
-        strLog += "\r\n";
-    }
+		//如果移动了ToLua目录，自己手动修复吧，只是例子就不做配置了
+		//string fullPath = Application.dataPath + "\\ToLua/Examples/02_ScriptsFromFile";
+		string fullPath = "D:/C#Stu/BoomBoomBoom/trunk/Assets/LuaFramework/ToLua/Examples/02_ScriptsFromFile";
+		lua.AddSearchPath(fullPath); 
+	}
 
-    void OnGUI()
-    {
-        GUI.Label(new Rect(100, Screen.height / 2 - 100, 600, 400), strLog);
+	void Log(string msg, string stackTrace, LogType type)
+	{
+		strLog += msg;
+		strLog += "\r\n";
+	}
 
-        if (GUI.Button(new Rect(50, 50, 120, 45), "DoFile"))
-        {
-            strLog = "";
-            lua.DoFile("ScriptsFromFile.lua");                        
-        }
-        else if (GUI.Button(new Rect(50, 150, 120, 45), "Require"))
-        {
-            strLog = "";            
-            lua.Require("ScriptsFromFile");            
-        }
+	void OnGUI()
+	{
+		GUI.Label(new Rect(100, Screen.height / 2 - 100, 600, 400), strLog);
 
-        lua.Collect();
-        lua.CheckTop();
-    }
+		if (GUI.Button(new Rect(50, 50, 120, 45), "DoFile"))
+		{
+			strLog = "";
+			lua.DoFile("ScriptsFromFile.lua");                        
+		}
+		else if (GUI.Button(new Rect(50, 150, 120, 45), "Require"))
+		{
+			strLog = "";            
+			lua.Require("ScriptsFromFile");            
+		}
 
-    void OnApplicationQuit()
-    {
-        lua.Dispose();
-        lua = null;
-#if UNITY_5 || UNITY_2017	
-        Application.logMessageReceived -= Log;
-#else
-        Application.RegisterLogCallback(null);
-#endif 
-    }
+		lua.Collect();
+		lua.CheckTop();
+	}
+
+	void OnApplicationQuit()
+	{
+		lua.Dispose();
+		lua = null;
+		#if UNITY_5 || UNITY_2017	
+			Application.logMessageReceived -= Log;
+		#else
+			Application.RegisterLogCallback(null);
+		#endif 
+	}
 }
